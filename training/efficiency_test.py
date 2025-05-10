@@ -5,7 +5,7 @@ import time
 import os
 from thop import profile
 from ptflops import get_model_complexity_info
-from model import build_model  # Make sure model.py has build_model()
+from model import EfficientNetModel
 
 def test_model_efficiency(model, input_size=(3, 224, 224)):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -41,5 +41,7 @@ def test_model_efficiency(model, input_size=(3, 224, 224)):
     os.remove("temp_weights.pth")
 
 if __name__ == "__main__":
-    model = build_model()
+    # Initialize model and get the PyTorch model instance
+    model_wrapper = EfficientNetModel()
+    model = model_wrapper.get_model()
     test_model_efficiency(model)
