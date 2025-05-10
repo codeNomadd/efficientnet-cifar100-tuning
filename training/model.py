@@ -7,9 +7,14 @@ from torch.utils.data import DataLoader
 import random
 import numpy as np
 import os
+from typing import Tuple, Optional
 
-def set_seed(seed=42):
-    """Set random seed for reproducibility"""
+def set_seed(seed: int = 42) -> None:
+    """Set random seed for reproducibility.
+    
+    Args:
+        seed (int): Random seed value. Defaults to 42.
+    """
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -20,8 +25,12 @@ def set_seed(seed=42):
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
-def get_device():
-    """Get the best available device (CUDA or CPU)"""
+def get_device() -> torch.device:
+    """Get the best available device (CUDA or CPU).
+    
+    Returns:
+        torch.device: The device to use for training.
+    """
     if torch.cuda.is_available():
         device = torch.device("cuda")
         print(f"Using CUDA GPU: {torch.cuda.get_device_name(0)}")
@@ -33,8 +42,19 @@ def get_device():
     return device
 
 class EfficientNetModel:
-    def __init__(self, num_classes=100):
-        """Initialize EfficientNet-B0 model with CIFAR-100 classes"""
+    """EfficientNet-B0 model implementation for CIFAR-100 classification.
+    
+    This class implements the EfficientNet-B0 model with modifications for CIFAR-100 dataset.
+    It uses transfer learning from ImageNet pretrained weights and modifies the classifier
+    for 100 classes.
+    """
+    
+    def __init__(self, num_classes: int = 100) -> None:
+        """Initialize EfficientNet-B0 model.
+        
+        Args:
+            num_classes (int): Number of output classes. Defaults to 100 for CIFAR-100.
+        """
         self.device = get_device()
         self.model = models.efficientnet_b0(pretrained=True)
         
@@ -49,13 +69,28 @@ class EfficientNetModel:
         self.model = self.model.to(self.device)
         print(f"Model is on device: {next(self.model.parameters()).device}")
         
-    def get_model(self):
-        """Return the model"""
+    def get_model(self) -> nn.Module:
+        """Get the model instance.
+        
+        Returns:
+            nn.Module: The EfficientNet-B0 model.
+        """
         return self.model
 
 class CIFAR100Dataset:
-    def __init__(self, batch_size=128, num_workers=4):
-        """Initialize CIFAR-100 dataset with appropriate transformations"""
+    """CIFAR-100 dataset implementation with data augmentation.
+    
+    This class handles the loading and preprocessing of CIFAR-100 dataset,
+    including data augmentation for training and basic preprocessing for testing.
+    """
+    
+    def __init__(self, batch_size: int = 128, num_workers: int = 4) -> None:
+        """Initialize CIFAR-100 dataset.
+        
+        Args:
+            batch_size (int): Batch size for data loading. Defaults to 128.
+            num_workers (int): Number of workers for data loading. Defaults to 4.
+        """
         self.batch_size = batch_size
         self.num_workers = num_workers
         
@@ -78,8 +113,12 @@ class CIFAR100Dataset:
             transforms.Normalize(mean=[0.5071, 0.4867, 0.4408], std=[0.2675, 0.2565, 0.2761])
         ])
         
-    def get_data_loaders(self):
-        """Get train and test data loaders"""
+    def get_data_loaders(self) -> Tuple[DataLoader, DataLoader]:
+        """Get train and test data loaders.
+        
+        Returns:
+            Tuple[DataLoader, DataLoader]: Train and test data loaders.
+        """
         # Load CIFAR-100 dataset
         train_dataset = datasets.CIFAR100(
             root='./data',

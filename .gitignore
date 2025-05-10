@@ -20,57 +20,29 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual Environment
-venv/
-env/
-ENV/
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-.DS_Store
-
-# Project specific
-data/
-results/
-*.pth
+# PyTorch
 *.pt
+*.pth
 *.ckpt
-*.log
-*.csv
-*.json
-!config/*.json
+*.bin
 
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# Testing
-.coverage
-htmlcov/
-.pytest_cache/
-.tox/
+# VS Code
+.vscode/
+*.code-workspace
 
-# Distribution
-dist/
-build/
-*.egg-info/
+# PyCharm
+.idea/
 
-# Logs
-logs/
+# Data and Results
+data/
+results/
 *.log
+*.csv
+*.json
 
-# Model checkpoints
-checkpoints/
-*.pth.tar
-*.pt
-*.ckpt
-
-# Tensorboard
-runs/
-tensorboard/
-
-# Environment variables
-.env
-.env.local
+# OS
+.DS_Store
+Thumbs.db
