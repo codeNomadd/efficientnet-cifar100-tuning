@@ -1,0 +1,16 @@
+🔍 Measuring with THOP...
+MACs: 413.99 M
+Params: 4.14 M
+
+🔍 Measuring with ptflops...
+ptflops MACs: 409.04 MMac
+ptflops Params: 4.14 M
+
+🚀 Measuring Inference Time...
+Avg Inference Time: 37.16 ms
+
+📦 Measuring Model Size...
+State Dict Size: 16.15 MB
+
+🧠 Measuring Peak RAM Usage...
+Peak RAM Usage: 366.56 MB
