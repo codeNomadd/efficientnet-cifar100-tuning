@@ -1,57 +1,82 @@
 # EfficientNet-B0 CIFAR-100 Fine-tuning
 
-This project implements fine-tuning of EfficientNet-B0 model on the CIFAR-100 dataset using PyTorch. The implementation achieves state-of-the-art results with modern training techniques and careful hyperparameter tuning.
+A demonstration of deep learning model tuning skills using EfficientNet-B0 on CIFAR-100. This project focuses on practical implementation aspects and serves as a foundation for further experimentation in model optimization and edge deployment.
 
-## 🏆 Results
+> **Note:** This project is intended as a practical demonstration and proof of concept. It is not designed for research or state-of-the-art benchmarking, but rather for educational and deployment-focused purposes.
+
+**This project is licensed under the MIT License. See the LICENSE file for details.**
+
+**Python Version:** 3.12+
+- Please ensure you have Python 3.12 or newer installed. Some dependencies may not work with earlier versions.
+- It is strongly recommended to use a [virtual environment](https://docs.python.org/3/tutorial/venv.html) to avoid conflicts with other Python packages.
+
+**Key Dependencies:**
+- torch
+- torchvision
+- thop
+- ptflops
+- psutil
+
+See `requirements.txt` for the full list.
+
+## 🎯 Project Goals
+
+- Demonstrate practical deep learning model tuning skills
+- Create a well-documented, production-ready implementation
+- Establish a foundation for future work in:
+  - Model distillation
+  - Edge device deployment
+  - Real-time inference optimization
+- Focus on code quality and reproducibility over benchmark chasing
+- **Not intended for research or SOTA benchmarking; results are for demonstration and practical use.**
+
+## �� Results
 
 - **Top-1 Accuracy**: 86.31% on CIFAR-100 test set
-- **Training Time**: ~2 hours on a single GPU
-- **Model Size**: ~29MB
+- **Model Size**: 
+  - Core Weights: 16.15 MB
+  - Full Checkpoint: ~29 MB (includes optimizer states, training metadata, and other components)
+- **Training Time**: ~2 hours on a single Google Cloud T4 GPU (Times may vary depending on hardware).
+- **Inference Time**: ~35-37 ms per image (batch size 1, measured on Apple M2 CPU; will vary on other hardware such as NVIDIA T4 GPU or Raspberry Pi). 
+  - *Note: Inference times will vary significantly depending on your hardware. Expect faster times on modern NVIDIA GPUs and slower times on edge devices like Raspberry Pi or Jetson Nano.*
 
 ![Training Curves](results/train_v1/plots/accuracy_curve.png)
+![Learning Rate Schedule](results/train_v1/plots/learning_rate_schedule.png)
 
-## 📏 Efficiency Metrics
+## 💡 Practical Applications
 
-This project includes full evaluation of the trained EfficientNet-B0 model’s efficiency characteristics. These metrics are useful for understanding deployment feasibility on edge devices such as Raspberry Pi or Jetson Nano.
+This implementation is particularly suitable for:
+- Embedded device image classification
+- Educational demonstrations
+- Real-time vision tasks on:
+  - Raspberry Pi
+  - Jetson Nano
+  - Other edge devices
+- Transfer learning experiments
+- Model optimization research
 
-| Metric                        | Value               | Tool Used     |
-|------------------------------|---------------------|---------------|
-| MACs (Multiply-Accumulate)   | 413.99 M            | THOP          |
-| MACs (ptflops)               | 409.04 M            | ptflops       |
-| Parameter Count              | 4.14 M              | THOP/ptflops  |
-| Model Size (state_dict)      | 16.15 MB            | torch         |
-| Inference Time (CPU avg)     | 37.16 ms            | time.time     |
-| **Peak RAM Usage (CPU)**     | 366.56 MB           | tracemalloc   |
+## ⚡ Efficiency Metrics
 
-✅ These values were recorded using a batch size of 1 and image resolution of 224x224.
+### ⚡ Model Efficiency
 
-### 💡 Hardware Implications
+| Metric                | Value         |
+|---------------------- |--------------|
+| MACs (THOP)           | 413.99 M     |
+| Params                | 4.14 M       |
+| Inference Time (CPU)  | ~35-37 ms (batch size 1) |
+| Model Size (core)     | 16.15 MB     |
+| Model Size (checkpoint)| ~29 MB (includes optimizer states, training metadata, and other components) |
+| Peak RAM Usage        | ~6.14 MB (CPU)|
 
-- **Deployment Target**: Raspberry Pi 4 (2GB/4GB) and Jetson Nano-class SBCs
-- **Notes**:
-  - The peak RAM usage and model size suggest the model can be deployed on edge devices **with 2GB+ RAM**.
-  - Inference time on CPU (~37ms) allows near real-time performance (~27 FPS possible).
-  - Models with lower parameter counts or quantized variants may further reduce footprint.
-  - For microcontrollers (e.g., STM32, Arduino), this model is too large without aggressive compression or re-design (e.g., MobileNetV3 Tiny).
-
-## ✨ Features
-
-- EfficientNet-B0 model fine-tuning
-- CIFAR-100 dataset training
-- Mixed precision training (FP16)
-- Gradient accumulation
-- Cosine learning rate scheduling with warm restarts
-- Comprehensive training metrics and visualization
-- Automatic checkpointing and training resume
-- GPU memory optimization
-- Automated efficiency evaluation: MACs, Params, Inference Time, RAM usage
+> **MACs (THOP):** The number of Multiply-Accumulate operations required per inference.
+> **Note:** All metrics measured on CPU (Apple M2) using PyTorch and THOP/ptflops libraries. Results may vary on different hardware (e.g., NVIDIA GPUs like T4, Raspberry Pi, Jetson Nano, etc.).
 
 ## 🛠️ Training Methodology
 
 ### Model Architecture
 - Base model: EfficientNet-B0 (pretrained on ImageNet)
 - Modified classifier for CIFAR-100 (100 classes)
-- Dropout rate: 0.2
+- Dropout rate: 0.2 (for regularization)
 
 ### Data Augmentation
 - Random Resized Crop (224x224)
@@ -76,12 +101,26 @@ This project includes full evaluation of the trained EfficientNet-B0 model’s e
 - **Training Duration**: 80 epochs
 - **Mixed Precision**: FP16 training
 
-## 📋 Requirements
+### Design Decisions
+- Conservative learning rate schedule for stability
+- Moderate data augmentation to prevent overfitting
+- Focus on inference efficiency over maximum accuracy
+- No aggressive optimization techniques to maintain code clarity
 
-- Python 3.7+
-- PyTorch 1.12.1
-- CUDA-compatible GPU (recommended)
-- 8GB+ GPU memory
+## 💻 Hardware Requirements
+
+### Training Environment
+- **GPU**: CUDA-compatible GPU (8GB+ VRAM)
+- **CPU**: Any modern multi-core processor
+- **RAM**: 16GB+ recommended
+- **Storage**: ~10GB for dataset and checkpoints
+- **OS**: Linux/Windows/macOS
+
+### Inference Environment
+- **CPU**: Any modern processor
+- **RAM**: 1GB+ (366.56 MB peak usage)
+- **Storage**: ~20MB for model weights
+- **OS**: Any OS with Python support
 
 ## 🚀 Installation
 
@@ -91,15 +130,22 @@ git clone https://github.com/yourusername/efficientnet-cifar100-finetuning.git
 cd efficientnet-cifar100-finetuning
 ```
 
-2. Install dependencies:
+2. (Recommended) Create and activate a virtual environment to avoid conflicts with other Python packages:
+```bash
+python3.12 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. Install dependencies (Python 3.12+ recommended):
 ```bash
 pip install -r requirements.txt
 ```
 
-## 💻 Usage
+**Key dependencies:** torch, torchvision, thop, ptflops, psutil
 
-To start training:
+## 📊 Usage
 
+### Training
 ```bash
 python training/train_v1.py
 ```
@@ -110,41 +156,83 @@ The training script will:
 - Train for 80 epochs with automatic checkpointing
 - Save training metrics and visualizations in the `results/train_v1` directory
 
-## 📊 Training Configuration
+### Efficiency Testing
+```bash
+python training/efficiency_test.py
+```
 
-Key training parameters (configurable in `train_v1.py`):
-- Batch size: 64
-- Learning rate: 0.001
-- Weight decay: 1e-4
-- Gradient accumulation steps: 4
-- Number of epochs: 80
-- Label smoothing: 0.1
-- Mixed precision: Enabled
-- Warm restarts: T_0=5, T_mult=2
-- Efficiency metrics evaluated using THOP, ptflops, and memory profiling
-- Efficiency metrics evaluation saved to: `results/efficiency_metrics/efficiency_metrics.txt`
-- RAM usage profiling using Python `tracemalloc`
+This will evaluate:
+- MACs and parameter count
+- Inference time
+- RAM usage
+- Model size
+- Results are saved to `results/efficiency_metrics/efficiency_metrics.txt`
 
 ## 📁 Project Structure
 
 ```
 efficientnet-cifar100-finetuning/
 ├── data/               # CIFAR-100 dataset
+├── results/           # Training results and checkpoints
 │   └── train_v1/     # Training run results
 │       ├── checkpoints/  # Model checkpoints
 │       ├── metrics/      # Training metrics
-│       ├── plots/        # Training visualizations
+│       ├── plots/        # Training visualizations (e.g., accuracy/loss curves, learning rate schedule)
 │       └── logs/         # Training logs
 ├── training/          # Training code
 │   ├── model.py      # Model and dataset implementation
 │   ├── train_v1.py   # Training script
-│   └── test_model.py # Model testing
-│   └── efficiency_test.py  # Model efficiency measurement script
-├── results/
-│   └── efficiency_metrics/  # Efficiency evaluation results (e.g., .txt logs of THOP, ptflops, RAM usage)
+│   └── efficiency_test.py # Model efficiency testing
 ├── LICENSE           # MIT License
 └── requirements.txt  # Project dependencies
 ```
+
+*Check the `results/train_v1/` folder for training logs, checkpoints, and visualizations. For example:*
+- `results/train_v1/plots/`: Visualizations of training curves and learning rates
+- `results/train_v1/checkpoints/`: Saved model checkpoints
+- `results/train_v1/logs/`: Training logs
+
+## 🔮 Future Work
+
+### Model Optimization
+- **Model Quantization:** Using techniques such as Post-training Quantization (PTQ), we plan to convert the model weights from float32 to lower precision (like INT8 or FP16), reducing the model size and increasing inference speed without a significant loss in accuracy. Tools like [TensorRT](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html) or [PyTorch Quantization](https://pytorch.org/docs/stable/quantization.html) can be used for this.
+- **Knowledge Distillation:** To improve the performance of smaller models, we plan to investigate distillation where a larger "teacher" model helps train a smaller "student" model, resulting in reduced size with minimal accuracy sacrifice. See [PyTorch Knowledge Distillation Tutorial](https://pytorch.org/tutorials/intermediate/distiller.html).
+- Pruning and compression
+- Architecture modifications
+
+### Deployment
+- ONNX export
+- TensorRT optimization
+- TensorFlow Lite
+- Mobile deployment
+- Web deployment
+- **Edge Device Deployment:** This model can be deployed to Raspberry Pi, Jetson Nano, or other edge devices by exporting the model to ONNX. For detailed instructions on how to export the model to ONNX, refer to the [ONNX Model Export and Deployment Guide](https://pytorch.org/tutorials/advanced/super_resolution_with_onnxruntime.html). You can use tools like TensorRT or TensorFlow Lite for further optimization.
+
+### Training Improvements
+- Advanced augmentation techniques
+- Learning rate finder (e.g., [Optuna](https://optuna.org/), [Ray Tune](https://docs.ray.io/en/latest/tune/index.html), [Hyperopt](https://github.com/hyperopt/hyperopt))
+- Hyperparameter optimization
+- Cross-validation
+
+## ⚠️ Troubleshooting
+
+### Common Issues
+
+**1. CUDA Out of Memory**
+- Reduce batch size
+- Enable gradient accumulation
+- Use mixed precision training
+- Refer to this [PyTorch Memory Management Guide](https://pytorch.org/docs/stable/notes/cuda.html) for more help.
+
+**2. Slow Training**
+- Check GPU utilization
+- Optimize data loading
+- Use appropriate batch size
+
+**3. Poor Accuracy**
+- Verify data preprocessing
+- Check learning rate
+- Monitor training curves
 
 ## 📝 License
 
@@ -158,210 +246,5 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 - [EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks](https://arxiv.org/abs/1905.11946)
 - [CIFAR-100 Dataset](https://www.cs.toronto.edu/~kriz/cifar.html)
-- [PyTorch Documentation](https://pytorch.org/docs/stable/index.html) 
-# 🔥 EfficientNet-B0 Fine-Tuning on CIFAR-100
-
-This project demonstrates high-performance fine-tuning of EfficientNet-B0 on the CIFAR-100 dataset using PyTorch. It applies modern training techniques, efficient optimization, and rigorous evaluation to achieve SOTA-level accuracy with compact model size.
-
----
-
-## 📈 Final Results
-
-- **Top-1 Accuracy**: **86.31%**
-- **Top-5 Accuracy**: *N/A*
-- **Total Epochs**: 80
-- **Training Time**: ~2 hours (Single GPU)
-- **Model Size**: ~29MB
-
-![Accuracy Curve](results/train_v1/plots/accuracy_curve.png)
-![LR Schedule](results/train_v1/plots/learning_rate_schedule.png)
-
----
-
-## ✅ Features
-
-- EfficientNet-B0 backbone (ImageNet pretrained)
-- Fine-tuning on CIFAR-100 (100 classes)
-- Strong augmentations (RandAugment, Erasing, ColorJitter)
-- Mixed precision (AMP)
-- CosineAnnealingWarmRestarts
-- Gradient Accumulation
-- Label Smoothing Loss
-- Auto-resume from checkpoints
-- Full metrics, visualizations, and logs
-- Automated efficiency evaluation: MACs, Params, Inference Time, RAM usage
-
----
-
-## 🧠 Training Strategy
-
-**Architecture**
-- Base: `EfficientNet-B0`
-- Classifier: Modified to 100 classes
-- Dropout: 0.2
-
-**Augmentations**
-- Resize to 224x224
-- Random Crop + Horizontal Flip
-- Rotation ±15°, ColorJitter
-- Random Erasing (p=0.4)
-- Normalize with CIFAR-100 stats
-
-**Optimization**
-- Optimizer: `AdamW`  
-- LR Scheduler: Cosine Annealing w/ Warm Restarts  
-  - `T_0`: 5 epochs, `T_mult`: 2  
-  - `LR_init`: 1e-3 → `LR_min`: 1e-6  
-- Loss: CrossEntropy + Label Smoothing (0.1)  
-- Batch Size: 64  
-- Grad Accumulation: 4 steps  
-- Mixed Precision: FP16 (AMP)  
-- Epochs: 80  
-
----
-
-## 💻 Quick Start
-
-### 1. Clone and Install
-```bash
-git clone https://github.com/yourusername/efficientnet-cifar100-finetuning.git
-cd efficientnet-cifar100-finetuning
-pip install -r requirements.txt
-```
-
-### 2. Train
-```bash
-python training/train_v1.py
-```
-
----
-
-## ⚙️ Configuration (in `train_v1.py`)
-
-```python
-batch_size = 64
-lr = 0.001
-weight_decay = 1e-4
-epochs = 80
-label_smoothing = 0.1
-accumulation_steps = 4
-use_amp = True
-```
-
----
-
-## 📁 Directory Structure
-
-```
-efficientnet-cifar100-finetuning/
-├── data/
-├── results/train_v1/
-│   ├── checkpoints/
-│   ├── metrics/
-│   ├── plots/
-│   └── logs/
-├── training/
-│   ├── model.py
-│   ├── train_v1.py
-│   └── test_model.py
-├── LICENSE
-└── requirements.txt
-```
-
----
-
-## 📝 License
-
-MIT License. See [LICENSE](LICENSE) for full terms.
-
----
-
-## 🙌 Acknowledgements
-
-- [EfficientNet Paper](https://arxiv.org/abs/1905.11946)
-- [CIFAR-100 Dataset](https://www.cs.toronto.edu/~kriz/cifar.html)
-- [PyTorch Docs](https://pytorch.org/docs/stable/index.html)
-# EfficientNet-B0 for CIFAR-100 (PyTorch)
-
-A compact yet powerful PyTorch pipeline for fine-tuning EfficientNet-B0 on the CIFAR-100 dataset. Designed for academic research and edge AI model development.
-
----
-
-## 🧪 Performance
-
-- 🎯 **Top-1 Accuracy**: 86.31%
-- 🕒 **Training Time**: ~2 hours (NVIDIA GPU)
-- 🧠 **Model Size**: 29MB
-- 🏋️ **Input Size**: 224×224
-- 🔁 **Epochs**: 80
-
----
-
-## 🧰 Features
-
-- Pretrained **EfficientNet-B0** backbone
-- CIFAR-100 fine-tuning at 224x224 resolution
-- **Label Smoothing**, **Mixup**, and **RandAugment**
-- **CosineAnnealingWarmRestarts** scheduler
-- **Gradient Accumulation** for memory-efficient training
-- **AMP** (mixed precision) support
-- **Resume training** from checkpoints
-- Full metric tracking, logging, and plots
-- Automated efficiency evaluation: MACs, Params, Inference Time, RAM usage
-
----
-
-## 🧠 Training Strategy
-
-| Component          | Config                                 |
-|--------------------|------------------------------------------|
-| Optimizer          | AdamW (lr=0.001, wd=1e-4)                |
-| LR Scheduler       | CosineAnnealingWarmRestarts (T_0=5)      |
-| Loss               | CrossEntropy with Label Smoothing (0.1) |
-| Augmentations      | RandomCrop, Flip, Rotation, Jitter, Erasing |
-| Batch Size         | 64                                       |
-| Epochs             | 80                                       |
-| Mixed Precision    | Enabled (AMP)                            |
-| Grad Accumulation  | 4 steps                                  |
-
----
-
-## 🚀 Quick Start
-
-```bash
-git clone https://github.com/yourusername/efficientnet-cifar100-finetuning.git
-cd efficientnet-cifar100-finetuning
-pip install -r requirements.txt
-python training/train_v1.py
-```
-
-Results and checkpoints will be saved in `results/train_v1/`.
-
----
-
-## 📁 File Structure
-
-```
-efficientnet-cifar100-finetuning/
-├── training/
-│   ├── model.py          # Model & dataset
-│   ├── train_v1.py       # Main training script
-│   └── test_model.py     # Inference / evaluation
-├── results/train_v1/     # Checkpoints, logs, metrics, plots
-├── requirements.txt
-└── LICENSE
-```
-
----
-
-## 📚 References
-
-- [EfficientNet (Tan & Le, 2019)](https://arxiv.org/abs/1905.11946)
-- [CIFAR-100 Dataset](https://www.cs.toronto.edu/~kriz/cifar.html)
-- [PyTorch Docs](https://pytorch.org/docs/stable/index.html)
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License.
+- [PyTorch Documentation](https://pytorch.org/docs/stable/index.html)
+- [Mixed Precision Training](https://pytorch.org/docs/stable/notes/amp_examples.html)
