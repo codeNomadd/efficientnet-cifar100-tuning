@@ -30,7 +30,7 @@ See `requirements.txt` for the full list.
 - Focus on code quality and reproducibility over benchmark chasing
 - **Not intended for research or SOTA benchmarking; results are for demonstration and practical use.**
 
-## �� Results
+## 🏆 Results
 
 - **Top-1 Accuracy**: 86.31% on CIFAR-100 test set
 - **Model Size**: 
@@ -56,8 +56,6 @@ This implementation is particularly suitable for:
 - Model optimization research
 
 ## ⚡ Efficiency Metrics
-
-### ⚡ Model Efficiency
 
 | Metric                | Value         |
 |---------------------- |--------------|
