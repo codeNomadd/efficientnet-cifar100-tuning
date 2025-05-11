@@ -6,18 +6,18 @@ A demonstration of deep learning model tuning skills using EfficientNet-B0 on CI
 
 **This project is licensed under the MIT License. See the LICENSE file for details.**
 
-**Python Version:** 3.12+
-- Please ensure you have Python 3.12 or newer installed. Some dependencies may not work with earlier versions.
-- It is strongly recommended to use a [virtual environment](https://docs.python.org/3/tutorial/venv.html) to avoid conflicts with other Python packages.
+---
 
-**Key Dependencies:**
-- torch
-- torchvision
-- thop
-- ptflops
-- psutil
+🐍 **Python Version:** 3.12+
 
-See `requirements.txt` for the full list.
+- ⚠️ Please ensure you have Python 3.12 or newer installed. Some dependencies may not work with earlier versions.
+- 💡 It is strongly recommended to use a [virtual environment](https://docs.python.org/3/tutorial/venv.html) to avoid conflicts with other Python packages.
+
+---
+
+![Training Accuracy Curve](results/train_v1/plots/accuracy_curve.png)
+
+---
 
 ## 🎯 Project Goals
 
@@ -138,8 +138,6 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```bash
 pip install -r requirements.txt
 ```
-
-**Key dependencies:** torch, torchvision, thop, ptflops, psutil
 
 ## 📊 Usage
 
