@@ -40,8 +40,6 @@ A demonstration of deep learning model tuning skills using EfficientNet-B0 on CI
 - **Inference Time**: ~35-37 ms per image (batch size 1, measured on Apple M2 CPU; will vary on other hardware such as NVIDIA T4 GPU or Raspberry Pi). 
   - *Note: Inference times will vary significantly depending on your hardware. Expect faster times on modern NVIDIA GPUs and slower times on edge devices like Raspberry Pi or Jetson Nano.*
 
-![Training Curves](results/train_v1/plots/accuracy_curve.png)
-![Learning Rate Schedule](results/train_v1/plots/learning_rate_schedule.png)
 
 ## 💡 Practical Applications
 
