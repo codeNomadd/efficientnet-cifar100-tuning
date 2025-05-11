@@ -8,6 +8,7 @@ from thop import profile
 from ptflops import get_model_complexity_info
 from model import EfficientNetModel
 import psutil
+import gc
 
 def test_model_efficiency(model, input_size=(3, 224, 224)):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -76,9 +77,25 @@ def test_model_efficiency(model, input_size=(3, 224, 224)):
     line = "\n🧠 Measuring Peak RAM Usage..."
     print(line)
     log_lines.append(line)
+    
+    # Force garbage collection before measuring
+    gc.collect()
+    torch.cuda.empty_cache() if torch.cuda.is_available() else None
+    
+    # Get initial memory usage
     process = psutil.Process(os.getpid())
-    mem_usage_mb = process.memory_info().rss / (1024 * 1024)
-    line = f"Peak RAM Usage: {mem_usage_mb:.2f} MB"
+    initial_mem = process.memory_info().rss / (1024 * 1024)
+    
+    # Run inference to measure peak memory
+    with torch.no_grad():
+        _ = model(dummy_input)
+    
+    # Get peak memory usage
+    peak_mem = process.memory_info().rss / (1024 * 1024)
+    
+    # Calculate the difference
+    mem_usage = peak_mem - initial_mem
+    line = f"Peak RAM Usage: {mem_usage:.2f} MB"
     print(line)
     log_lines.append(line)
 
